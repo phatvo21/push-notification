@@ -1,6 +1,6 @@
 import { BaseEntityDto } from '@app/common/dto';
 import { BaseEntity } from '@app/common/schemas/base.schema';
-import { mapFrom } from '@automapper/core';
+import { ignore, mapFrom } from '@automapper/core';
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import type { Mapper } from '@automapper/types';
 import { Injectable } from '@nestjs/common';
@@ -21,12 +21,18 @@ export class BaseProfile extends AutomapperProfile {
         )
         .forMember(
           (e) => e.createdAt,
-          mapFrom((e) => new Date(e.createdAt)),
+          mapFrom(() => new Date()),
         )
         .forMember(
           (e) => e.updatedAt,
-          mapFrom((e) => new Date(e.updatedAt)),
-        )
+          mapFrom(() => new Date()),
+        );
+
+      mapper
+        .createMap(BaseEntityDto, BaseEntity)
+        .forMember((e) => e._id, ignore())
+        .forMember((e) => e.createdAt, ignore())
+        .forMember((e) => e.updatedAt, ignore());
     };
   }
 }

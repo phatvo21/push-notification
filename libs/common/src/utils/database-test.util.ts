@@ -15,23 +15,22 @@ export const execAsync = util.promisify(exec);
 
 export const restoreDb = async (database = 'notification.archive', collection = '*', dbPath = 'database') => {
   console.info('Begin restore', database, collection);
+  const path = `${process.cwd()}/${dbPath}`;
 
   await execAsync(
-    `mongorestore --host localhost:27017 -u mongo -p mongo --nsInclude="notification.${collection}" --gzip --archive=${dbPath}/${database} --drop --noIndexRestore --quiet --numParallelCollections=4 --numInsertionWorkersPerCollection=2`,
+    `mongorestore --host localhost:27017 -u mongo -p mongo --authenticationDatabase admin --nsInclude="notification.${collection}" --archive=${path}/${database} --drop --noIndexRestore --quiet --numParallelCollections=4 --numInsertionWorkersPerCollection=2`,
   );
   console.info('Restored:', database, collection);
 };
-
 export interface ServerType {
   app: NestFastifyApplication;
   mapper: Mapper;
 }
 export interface RequestType {
   agent: supertest.SuperTest<supertest.Test>;
-  bearer: string;
 }
 
-export const generateRequest = (server: { app: NestFastifyApplication }) => {
+export const generateRequest = (server: { app: NestFastifyApplication }): RequestType => {
   const agent = supertest.agent(server.app.getHttpServer());
   return {
     agent,
@@ -57,7 +56,6 @@ export const generateMockServer = async (modules = []) => {
   };
 };
 
-export const getModel = (server: { app: NestFastifyApplication }, entityName: string) =>
-  server.app.get(getModelWithString(entityName));
+export const getModel = (server: { app: NestFastifyApplication }, entityName: string) => getModelWithString(entityName);
 
 export const wait = async (time = 500) => new Promise((resolve) => setTimeout(() => resolve(''), time));

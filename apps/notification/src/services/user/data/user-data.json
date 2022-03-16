@@ -17,6 +17,12 @@
       "companyId": "97827c70-a529-11ec-b909-0242ac120002",
       "subscribedChannels": [],
       "firstName": "first name 3"
+    },
+    {
+      "_id": "87543b3a-a529-11ec-b909-0242ac137789",
+      "companyId": "67543c70-a529-11ec-b909-0242ac198732",
+      "subscribedChannels": [],
+      "firstName": "first name 4"
     }
   ]
 }

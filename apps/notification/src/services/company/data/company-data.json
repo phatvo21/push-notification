@@ -29,6 +29,16 @@
         }
       ],
       "companyName": "Test Company 3"
+    },
+    {
+      "_id": "67543c70-a529-11ec-b909-0242ac198732",
+      "subscribedChannels": [],
+      "users": [
+        {
+          "_id": "87543b3a-a529-11ec-b909-0242ac137789"
+        }
+      ],
+      "companyName": "Test Company 4"
     }
   ]
 }

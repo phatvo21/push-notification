@@ -11,8 +11,8 @@ import {
 import { CompanyService } from '@app/notification/services/company/company.service';
 import { NotificationChannelService } from '@app/notification/services/notification-channel/notification.channel.service';
 import { UserService } from '@app/notification/services/user/user.service';
-import { Injectable, Logger, Scope } from '@nestjs/common';
-import { assign, forEach, isUndefined, keys,omitBy } from 'lodash';
+import { Injectable, Logger, NotFoundException, Scope } from '@nestjs/common';
+import { forEach, isUndefined, omitBy } from 'lodash';
 import { Model } from 'mongoose';
 import { InjectModel } from 'nestjs-typegoose';
 
@@ -41,8 +41,9 @@ export class PushNotificationService extends BaseService<PushNotificationEntity>
 
     const isValidUser = company.users.some((com) => com._id === userId);
     const isValidCompany = user.companyId === companyId;
+    let success = false;
 
-    if (!isValidUser && !isValidCompany) return { success: false };
+    if (!isValidUser && !isValidCompany) throw new NotFoundException('User and Company does not match');
 
     // Remove the duplicate results and combine into an array of channel
     const subscribedChannels = [...new Set([...user.subscribedChannels, ...company.subscribedChannels])];
@@ -50,11 +51,10 @@ export class PushNotificationService extends BaseService<PushNotificationEntity>
     const { firstName } = user;
     const { companyName } = company;
 
-    if (subscribedChannels.length === 0) return { success: false };
+    if (subscribedChannels.length === 0) return { success };
 
     const notificationType = NOTIFICATION_TYPE[type];
     const promise: Array<unknown> = [];
-    let success = false;
 
     forEach(subscribedChannels, (subscribedChannel) => {
       if (notificationType[subscribedChannel] === CHANNEL.ui) {
@@ -81,33 +81,35 @@ export class PushNotificationService extends BaseService<PushNotificationEntity>
   ): Promise<ListQueryEntity> {
     // we removed fields that are undefined in query object to avoid finding unnecessary fields
     const refactoredFindParticipantsQuery = omitBy(findPushNotificationsQuery, isUndefined);
-    const findParticipantsQueryFields = keys(refactoredFindParticipantsQuery);
 
-    const projection = assign(
-      {},
-      ...findParticipantsQueryFields.map((field) => {
-        return { [field]: 1 };
-      }),
+    const notifications = await this.findMany(
+      refactoredFindParticipantsQuery,
+      {
+        userId: 1,
+        channel: 1,
+        content: 1,
+        isRead: 1,
+        companyId: 1,
+      },
+      {
+        lean: true,
+        ...(limit
+          ? {
+              limit,
+            }
+          : {}),
+        ...(limit && page
+          ? {
+              skip: page * limit,
+            }
+          : {}),
+        ...(sortField && sortDirection
+          ? {
+              sort: { [sortField]: parseInt(sortDirection, 10) },
+            }
+          : {}),
+      },
     );
-
-    const notifications = await this.findMany(refactoredFindParticipantsQuery, projection, {
-      lean: true,
-      ...(limit
-        ? {
-            limit,
-          }
-        : {}),
-      ...(limit && page
-        ? {
-            skip: page * limit,
-          }
-        : {}),
-      ...(sortField && sortDirection
-        ? {
-            sort: { [sortField]: parseInt(sortDirection, 10) },
-          }
-        : {}),
-    });
 
     const total = await this.pushNotificationModel.countDocuments(refactoredFindParticipantsQuery);
     return {
