@@ -1,73 +1,201 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Service serves send push notifications to the users who subscribed to specific channels.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- [Install](#install)
+  - [Setup Environment](#setup-environment)
+    - [Installation](#installation)
+    - [Environment Configuration](#environment-configuration)
+    - [Run database and seeding data](#run-database-and-seeding-data)
+- [Commands](#commands)
+- [API Endpoints](#api-endpoints)
+  - [POST - /notifications](#post---notifications)
+  - [GET - /notifications](#get---notifications)
+  - [GET - /health](#get---health)
+- [Documents](#documents)
+  - [API Document](#api-document)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Install
 
-## Description
+### Setup Environment
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+#### Installation
 
-## Installation
+Before starting to explore this application. You have to make sure your machine has a Node version >= 15.
+
+- `Node verion >= 15` (Required)
+- `Docker client` (Required)
+- Run the command `npm i` to install all the dependencies of this application.
+
+#### Environment Configuration
+
+Following `apps/notification/.env.example` file, you have to create a new copy file called `apps/notification/.env`. This is where the environments variables are situated. The following variables below must be declared in the `.env` file.
+
+- `NODE_ENV=development or NODE_ENV=production` (The running environment of the application)
+- `APP_PORT=4000` (The running port of the application)
+- `APP_HOST=0.0.0.0` (The address where hosted application)
+- `DATABASE_URL=mongodb://mongo:mongo@localhost:27017/notification?authSource=admin` (The string hold all database's credentials)
+
+#### Run database and seeding data
 
 ```bash
-$ npm install
+$ docker-compose up -d mongo mongo-express
+$ npm run db:restore
+
+You can check web dashboard (mongo-express) on http://localhost:8081
 ```
 
-## Running the app
+## Commands
+
+By using the following commands you will make the application work in the proper way.
 
 ```bash
-# development
-$ npm run start
+# format the code styles
+$ npm run format
 
-# watch mode
-$ npm run start:dev
+# lint, checking the coding rules
+$ npm run lint
 
-# production mode
-$ npm run start:prod
-```
+# lint, fix violents coding rules
+$ npm run lint:fix
 
-## Test
+# build notification application
+$ npm run build:notification
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
+# run end to end testing
 $ npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# run both unit test and e2e testing
+$ npm run test
+
+# start the application using Docker development
+$ docker-compose up
+
+# force the application running with Docker in the background
+$ docker-compose up -d
+
+# development
+$ npm run start:notification:dev
+
+# production mode
+$ npm run start:notification:prod
 ```
 
-## Support
+## API Endpoints
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### POST - /notifications
 
-## Stay in touch
+Endpoint allows sending push notifications to a given user, who subscribed to the specific channels.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+> Auth Type: NONE
 
-## License
+#### Body Request<!-- omit in toc -->
 
-Nest is [MIT licensed](LICENSE).
+| Property  | Type   | Specificity                                                               |
+| --------- | ------ | ------------------------------------------------------------------------- |
+| userId    | string | **required**                                                              |
+| companyId | string | **required**                                                              |
+| type      | string | **enum: ['leave-balance-reminder', 'monthly-payslip', 'happy-birthday']** |
+
+#### Response<!-- omit in toc -->
+
+201
+
+```jsonc
+{
+  "success": true
+}
+```
+
+400
+
+```jsonc
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": ["userId should be a integer", "companyId should not be empty."]
+}
+```
+
+500
+
+```jsonc
+{
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Database connection error"
+}
+```
+
+### GET - /notifications
+
+Endpoint allows fetching the list channel notifications for a given user.
+
+> Auth Type: NONE
+
+#### Query Parameters<!-- omit in toc -->
+
+| Property      | Type    | Specificity               |
+| ------------- | ------- | ------------------------- |
+| userId        | string  | **required**              |
+| channel       | string  | **enum: ['ui', 'email']** |
+| page          | integer | Optional                  |
+| limit         | integer | Optional                  |
+| sortBy        | integer | Optional                  |
+| sortDirection | integer | Optional                  |
+
+#### Response<!-- omit in toc -->
+
+200
+
+```jsonc
+{
+  "total": 1,
+  "notifications": [
+    {
+      "_id": "-P7UD8SL_thc9cn2KrrDD",
+      "createdAt": "2022-03-16T19:31:50.794Z",
+      "updatedAt": "2022-03-16T19:31:50.794Z",
+      "content": "This is notification UI",
+      "userId": "97827b3a-a529-11ec-b909-0242ac120002",
+      "companyId": "97827c70-a529-11ec-b909-0242ac120002",
+      "channel": "ui",
+      "isRead": false
+    }
+  ]
+}
+```
+
+400
+
+```jsonc
+{
+  "statusCode": 404,
+  "error": "Not Found",
+  "message": "Notification not found"
+}
+```
+
+500
+
+```jsonc
+{
+  "statusCode": 500,
+  "error": "Internal Server Error",
+  "message": "Database connection error"
+}
+```
+
+### GET - /health
+
+The default endpoint runs in the middleware when you start running the application. This serves to check the health status of this application.
+
+> Auth Type: NONE
+
+#### Response<!-- omit in toc -->
+
+200 - OK
+
+## Documents
+
+### API Document
+
+After starting the command `npm run start:notification:dev` or `npm run start:notification:prod`, you can land on API document page which is`http://${url}:${port}/ws-notification/documents/static/index.html` and all documents for the implemented endpoints are situated there.
