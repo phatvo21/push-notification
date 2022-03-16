@@ -22,5 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
 
+      - name: Install dependencies
+        run: npm i --force
+
       - name: Run tests
         run: npm run test:compose
