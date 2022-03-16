@@ -1,0 +1,48 @@
+version: '3.3'
+
+services:
+  mongo:
+    image: mongo:4.2.12-bionic
+    container_name: notification-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: notification
+    volumes:
+      - ./database:/database
+      - ./.db-data/mongodb:/data/db
+      - ./.db-data/mongoconfig:/data/configdb
+    ports:
+      - 27017:27017
+    command: mongod --quiet --logpath /dev/null
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+      ME_CONFIG_MONGODB_AUTH_USERNAME: mongo
+      ME_CONFIG_MONGODB_AUTH_PASSWORD: mongo
+    depends_on:
+      - mongo
+
+  notification:
+    image: notification
+    container_name: app-notification
+    build:
+      context: .
+      args:
+        - COMMIT_HASH=COMMIT_HASH
+      dockerfile: ./apps/notification/dockerfile
+    environment:
+      APP_PORT: 3000
+      NODE_ENV: production
+      DATABASE_URL: mongodb://mongo:mongo@mongo/notification?authSource=admin
+    ports:
+      - 4000:3000
+    depends_on:
+      - mongo

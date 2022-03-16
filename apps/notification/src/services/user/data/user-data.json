@@ -1,0 +1,22 @@
+{
+  "users": [
+    {
+      "_id": "97826c58-a529-11ec-b909-0242ac120002",
+      "companyId": "97826f78-a529-11ec-b909-0242ac120002",
+      "subscribedChannels": ["ui", "email"],
+      "firstName": "first name 1"
+    },
+    {
+      "_id": "978271a8-a529-11ec-b909-0242ac120002",
+      "companyId": "978279b4-a529-11ec-b909-0242ac120002",
+      "subscribedChannels": ["ui"],
+      "firstName": "first name 2"
+    },
+    {
+      "_id": "97827b3a-a529-11ec-b909-0242ac120002",
+      "companyId": "97827c70-a529-11ec-b909-0242ac120002",
+      "subscribedChannels": [],
+      "firstName": "first name 3"
+    }
+  ]
+}

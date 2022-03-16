@@ -40,10 +40,4 @@ lerna-debug.log*
 .cache
 .puppeteerCache
 .db-data
-package-lock.json
-globalConfig.json
-
---quiet
---quiet/_cacache
---quiet/_cacache/content-v2
 

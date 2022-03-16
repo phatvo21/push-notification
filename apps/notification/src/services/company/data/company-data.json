@@ -1,0 +1,34 @@
+{
+  "companies": [
+    {
+      "_id": "97826f78-a529-11ec-b909-0242ac120002",
+      "subscribedChannels": [],
+      "users": [
+        {
+          "_id": "97826c58-a529-11ec-b909-0242ac120002"
+        }
+      ],
+      "companyName": "Test Company 1"
+    },
+    {
+      "_id": "978279b4-a529-11ec-b909-0242ac120002",
+      "subscribedChannels": [],
+      "users": [
+        {
+          "_id": "978271a8-a529-11ec-b909-0242ac120002"
+        }
+      ],
+      "companyName": "Test Company 2"
+    },
+    {
+      "_id": "97827c70-a529-11ec-b909-0242ac120002",
+      "subscribedChannels": ["email"],
+      "users": [
+        {
+          "_id": "97827b3a-a529-11ec-b909-0242ac120002"
+        }
+      ],
+      "companyName": "Test Company 3"
+    }
+  ]
+}
