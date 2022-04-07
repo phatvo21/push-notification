@@ -31,7 +31,7 @@ export const CustomOmitType = <T, K extends keyof T>(
   classRef: Constructible<T>,
   keys: readonly K[],
 ): MappedType<Omit<T, typeof keys[number]>> => {
-  const isInheritedPredicate = (propertyKey: string) => keys.includes(propertyKey as K);
+  const isInheritedPredicate = (propertyKey: string) => !keys.includes(propertyKey as K);
 
   class MappedClass extends swaggerOmitType(classRef, keys) {
     constructor() {

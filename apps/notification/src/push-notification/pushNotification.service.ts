@@ -56,6 +56,7 @@ export class PushNotificationService extends BaseService<PushNotificationEntity>
     const notificationType = NOTIFICATION_TYPE[type];
     const promise: Array<unknown> = [];
 
+    // TODO: Using factory pattern to resolve this problem
     forEach(subscribedChannels, (subscribedChannel) => {
       if (notificationType[subscribedChannel] === CHANNEL.ui) {
         promise.push(this.notificationChannelService.uiChannel.sendNotify({ userId, companyId, firstName }));
